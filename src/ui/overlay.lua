@@ -23,9 +23,11 @@ Overlay.new = function(self, x, y, width, height, isActive)
 	obj.width = width
 	obj.height = height
 	obj.isActive = isActive or true
+	obj.isHidden = false
 	obj.bgColor = { 0, 0, 0 }
 	obj.borderColor = { 1, 1, 1 }
 	obj.isMouseInside = false
+	obj.headerOffset = 0
 
 	obj.elements = {}
 
@@ -37,8 +39,56 @@ Overlay.new = function(self, x, y, width, height, isActive)
 	return obj
 end
 
-Overlay.configureHeader = function(self, title, isMovable, isHidable, isClosable)
-	--self.
+Overlay.configureHeader = function(self, title, isMovable, isHidable, isCloseable)
+	self.headerActive = true
+	self.title = title or ""
+	self.titleHeight = 20
+	self.isMovable = isMovable or true
+	self.isHidable = isHidable or true
+	self.isCloseable = isCloseable or true
+	self.headerOffset = 20
+	local offsetCounter = 0
+
+	if self.isCloseable then
+		offsetCounter = offsetCounter + 20
+		self.closeButton = self:newButton(self.width - 20, -20, 20, 20, "X", function(self)
+			self.isActive = false
+		end, self)
+		self.closeButton.textX = 6
+		self.closeButton.colorHighlighted = { 1, 0, 0 }
+	end
+
+	if self.isHidable then
+		offsetCounter = offsetCounter + 20
+		self.hideButton = self:newButton(self.width - 40, -20, 20, 20, "^", function(self)
+			if self.isHidden then
+				self.hideButton.text = "^"
+				self.hideButton.textX = 5
+			else
+				self.hideButton.text = "V"
+				self.hideButton.textX = 6
+			end
+			self.isHidden = not self.isHidden
+		end, self)
+		self.hideButton.textX = 5
+	end
+
+	self.titleBlock = self:newButton(0, -20, self.width - offsetCounter, 20, self.title, function(self) end)
+	self.titleBlock.update = function(self, dt, mouseX, mouseY) end
+	--[[
+	self.checkMouseMove = function(self, mouseX, mouseY, mouseState)
+		if self.active then
+			if (mouseX > self.x) and (mouseX < self.x + self.width - self.exitButton.width) then
+				if (mouseY > self.y) and (mouseY < self.y + self.titleHeight) then
+					if mouseState == 1 then
+						self.x = mouseX - self.width / 2
+						self.y = mouseY - self.titleHeight / 2
+					end
+				end
+			end
+		end
+	end
+	--]]
 end
 
 Overlay.newButton = function(self, x, y, width, height, text, func, funcArgs)
@@ -150,7 +200,7 @@ Overlay.draw = function(self, x, y)
 	love.graphics.setColor(1, 1, 1)
 
 	for i = 1, #self.elements, 1 do -- NOTE: might be unreliable or even unsafe
-		self.elements[i]:draw(self.x, self.y)
+		self.elements[i]:draw(self.x, self.y + self.headerOffset)
 	end
 	--[[
 	for i = #self.elements, 1, -1 do

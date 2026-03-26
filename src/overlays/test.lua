@@ -6,6 +6,8 @@ local testButton = ov:newButton(100, 100, 100, 50, "click")
 local textTest = ov:newLabel(100, 50)
 -- Layer 2
 local popUp = ov:newOverlay(150, 90, 200, 200)
+popUp:configureHeader("popUp")
+
 local popEntry = popUp:newEntry(15, 40, 50, 20)
 
 local popProgressBar = popUp:newProgressBar(15, 15, 100, 20, 5)
