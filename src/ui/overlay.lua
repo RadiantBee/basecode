@@ -183,6 +183,15 @@ Overlay.update = function(self, dt, mouseX, mouseY)
 	if not self.isActive then
 		return
 	end
+	if self.isHidden then
+		if self.isHidable then
+			self.hideButton:update(dt, mouseX, mouseY)
+		end
+		if self.isCloseable then
+			self.closeButton:update(dt, mouseX, mouseY)
+		end
+		return
+	end
 	for i = #self.elements, 1, -1 do
 		self.elements[i]:update(dt, mouseX, mouseY)
 	end
@@ -191,6 +200,18 @@ Overlay.draw = function(self, x, y)
 	self.x = self.ox + x
 	self.y = self.oy + y
 	if not self.isActive then
+		return
+	end
+	if self.isHidden then
+		love.graphics.setColor(self.bgColor)
+		love.graphics.rectangle("fill", self.x, self.y, self.width, self.titleHeight)
+		self.titleBlock:draw(self.x, self.y + self.headerOffset)
+		if self.isHidable then
+			self.hideButton:draw(self.x, self.y + self.headerOffset)
+		end
+		if self.isCloseable then
+			self.closeButton:draw(self.x, self.y + self.headerOffset)
+		end
 		return
 	end
 	love.graphics.setColor(self.bgColor)
