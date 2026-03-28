@@ -87,7 +87,7 @@ Overlay.configureHeader = function(self, title, isMovable, isHidable, isCloseabl
 		end
 
 		self.titleBlock.mousereleased = function(self, mouseX, mouseY)
-			if not self.hide then
+			if not self.hide and self.shouldMove then
 				self.shouldMove = false
 				return true
 			end
@@ -158,7 +158,7 @@ Overlay.mousepressed = function(self, x, y, button)
 		if self.isHidable and not self.mousepressWasProcessed then
 			self.mousepressWasProcessed = self.hideButton:mousepressed(x, y, button)
 		end
-		if self.isCloseable then
+		if self.isCloseable and not self.mousepressWasProcessed then
 			self.mousepressWasProcessed = self.closeButton:mousepressed(x, y, button)
 		end
 		return self.mousepressWasProcessed
@@ -187,7 +187,7 @@ Overlay.mousereleased = function(self, x, y, button)
 		if self.isHidable and not self.mousereleaseWasProcessed then
 			self.mousereleaseWasProcessed = self.hideButton:mousereleased(x, y, button)
 		end
-		if self.isCloseable then
+		if self.isCloseable and not self.mousereleaseWasProcessed then
 			self.mousereleaseWasProcessed = self.closeButton:mousereleased(x, y, button)
 		end
 		return self.mousereleaseWasProcessed

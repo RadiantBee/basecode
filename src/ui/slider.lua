@@ -29,7 +29,7 @@ Slider.new = function(self, x, y, width, height, maxValue, bWidth, bHeight, valu
 	end
 
 	obj.button.mousereleased = function(self, mouseX, mouseY)
-		if not self.hide then
+		if not self.hide and self.shouldMove then
 			self.shouldMove = false
 			return true
 		end
