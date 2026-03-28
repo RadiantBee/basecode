@@ -73,22 +73,27 @@ Overlay.configureHeader = function(self, title, isMovable, isHidable, isCloseabl
 		self.hideButton.textX = 5
 	end
 
-	self.titleBlock = self:newButton(0, -20, self.width - offsetCounter, 20, self.title, function(self) end)
+	self.titleBlock = self:newButton(0, -20, self.width - offsetCounter, 20, self.title)
 	self.titleBlock.update = function(self, dt, mouseX, mouseY) end
-	--[[
-	self.checkMouseMove = function(self, mouseX, mouseY, mouseState)
-		if self.active then
-			if (mouseX > self.x) and (mouseX < self.x + self.width - self.exitButton.width) then
-				if (mouseY > self.y) and (mouseY < self.y + self.titleHeight) then
-					if mouseState == 1 then
-						self.x = mouseX - self.width / 2
-						self.y = mouseY - self.titleHeight / 2
-					end
-				end
+
+	if self.isMovable then
+		self.shouldMove = false
+		self.titleBlock.mousepressed = function(self, mouseX, mouseY)
+			if not self.hide and self:isHighlighted(mouseX, mouseY) then
+				self.shouldMove = true
+				return true
 			end
+			return false
+		end
+
+		self.titleBlock.mousereleased = function(self, mouseX, mouseY)
+			if not self.hide then
+				self.shouldMove = false
+				return true
+			end
+			return false
 		end
 	end
-	--]]
 end
 
 Overlay.newButton = function(self, x, y, width, height, text, func, funcArgs)
@@ -142,10 +147,25 @@ Overlay.isInside = function(self, x, y)
 end
 
 Overlay.mousepressed = function(self, x, y, button)
-	if not self:isInside(x, y) then
-		return false
-	end
 	self.mousepressWasProcessed = false
+	if not self.isActive then
+		return self.mousepressWasProcessed
+	end
+	if self.isHidden then
+		if self.isMovable then
+			self.mousepressWasProcessed = self.titleBlock:mousepressed(x, y, button)
+		end
+		if self.isHidable and not self.mousepressWasProcessed then
+			self.mousepressWasProcessed = self.hideButton:mousepressed(x, y, button)
+		end
+		if self.isCloseable then
+			self.mousepressWasProcessed = self.closeButton:mousepressed(x, y, button)
+		end
+		return self.mousepressWasProcessed
+	end
+	if not self:isInside(x, y) then
+		return self.mousepressWasProcessed
+	end
 	for i = #self.elements, 1, -1 do
 		if self.mousepressWasProcessed then
 			break
@@ -157,6 +177,22 @@ Overlay.mousepressed = function(self, x, y, button)
 end
 Overlay.mousereleased = function(self, x, y, button)
 	self.mousereleaseWasProcessed = false
+	if not self.isActive then
+		return self.mousereleaseWasProcessed
+	end
+	if self.isHidden then
+		if self.isMovable then
+			self.mousereleaseWasProcessed = self.titleBlock:mousereleased(x, y, button)
+		end
+		if self.isHidable and not self.mousereleaseWasProcessed then
+			self.mousereleaseWasProcessed = self.hideButton:mousereleased(x, y, button)
+		end
+		if self.isCloseable then
+			self.mousereleaseWasProcessed = self.closeButton:mousereleased(x, y, button)
+		end
+		return self.mousereleaseWasProcessed
+	end
+
 	for i = #self.elements, 1, -1 do
 		if self.mousereleaseWasProcessed then
 			break
@@ -167,10 +203,9 @@ Overlay.mousereleased = function(self, x, y, button)
 end
 Overlay.keypressed = function(self, key)
 	self.keypressWasProcessed = false
-	if not self.isActive then
+	if not self.isActive or self.isHidden then
 		return self.keypressWasProcessed
 	end
-
 	for i = #self.elements, 1, -1 do
 		if self.keypressWasProcessed then
 			break
@@ -182,6 +217,10 @@ end
 Overlay.update = function(self, dt, mouseX, mouseY)
 	if not self.isActive then
 		return
+	end
+	if self.isMovable and self.titleBlock.shouldMove then
+		self.ox = mouseX - self.width / 2
+		self.oy = mouseY - self.titleHeight / 2
 	end
 	if self.isHidden then
 		if self.isHidable then
@@ -262,8 +301,6 @@ function EmptyDiaolgWindow(x, y, width, height)
 			if (mouseX > self.x) and (mouseX < self.x + self.width - self.exitButton.width) then
 				if (mouseY > self.y) and (mouseY < self.y + self.titleHeight) then
 					if mouseState == 1 then
-						self.x = mouseX - self.width / 2
-						self.y = mouseY - self.titleHeight / 2
 					end
 				end
 			end
