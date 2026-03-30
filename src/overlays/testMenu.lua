@@ -3,8 +3,6 @@ local menu = Overlay:new(0, 0, 800, 600)
 
 local playButton = menu:newButton(100, 100, 100, 50, "Play")
 
---print(menu.parent.test)
-
 playButton.func = function()
 	menu.parent.game.isActive = true
 	menu.isActive = false
