@@ -137,6 +137,11 @@ Overlay.newOverlay = function(self, x, y, width, height, isActive)
 	return ov
 end
 
+Overlay.add = function(self, obj)
+	utils.addToList(self.elements, obj)
+	return obj
+end
+
 Overlay.isInside = function(self, x, y)
 	if x > self.x and y > self.y then
 		if x < self.x + self.width and y < self.y + self.height then
@@ -236,11 +241,11 @@ Overlay.update = function(self, dt, mouseX, mouseY)
 	end
 end
 Overlay.draw = function(self, x, y)
-	self.x = self.ox + x
-	self.y = self.oy + y
 	if not self.isActive then
 		return
 	end
+	self.x = self.ox + x
+	self.y = self.oy + y
 	if self.isHidden then
 		love.graphics.setColor(self.bgColor)
 		love.graphics.rectangle("fill", self.x, self.y, self.width, self.titleHeight)
