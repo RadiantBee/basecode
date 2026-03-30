@@ -144,9 +144,14 @@ Overlay.newOverlay = function(self, x, y, width, height, isActive)
 	return ov
 end
 
-Overlay.add = function(self, obj)
+Overlay.add = function(self, obj) -- preferably for overlays
 	utils.addToList(self.elements, obj)
 	obj.parent = self
+	if obj.elements then -- safeguard in case it's not overlay
+		for i = #obj.elements, 1, -1 do -- invoking load
+			obj.elements[i]:load()
+		end
+	end
 	return obj
 end
 
