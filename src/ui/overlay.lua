@@ -99,46 +99,54 @@ end
 Overlay.newButton = function(self, x, y, width, height, text, func, funcArgs)
 	local button = Button:new(x, y, width, height, text, func, funcArgs)
 	utils.addToList(self.elements, button)
+	button.parent = self
 	return button
 end
 
 Overlay.newSlider = function(self, x, y, width, height, maxValue, bWidth, bHeight, value, showText, color)
 	local slider = Slider:new(x, y, width, height, maxValue, bWidth, bHeight, value, showText, color)
 	utils.addToList(self.elements, slider)
+	slider.parent = self
 	return slider
 end
 
 Overlay.newProgressBar = function(self, x, y, width, height, maxValue, value, showText, color)
 	local progressBar = ProgressBar:new(x, y, width, height, maxValue, value, showText, color)
 	utils.addToList(self.elements, progressBar)
+	progressBar.parent = self
 	return progressBar
 end
 Overlay.newLabel = function(self, x, y, text)
 	local label = Label:new(text, x, y)
 	utils.addToList(self.elements, label)
+	label.parent = self
 	return label
 end
 
 Overlay.newEntry = function(self, x, y, width, height, onEnterFunc, onEnterFuncArgs)
 	local entry = Entry:new(x, y, width, height, onEnterFunc, onEnterFuncArgs)
 	utils.addToList(self.elements, entry)
+	entry.parent = self
 	return entry
 end
 
 Overlay.newElement = function(self)
 	local elem = uiElement:new()
 	utils.addToList(self.elements, elem)
+	elem.parent = self
 	return elem
 end
 
 Overlay.newOverlay = function(self, x, y, width, height, isActive)
 	local ov = Overlay:new(x, y, width, height, isActive)
 	utils.addToList(self.elements, ov)
+	ov.parent = self
 	return ov
 end
 
 Overlay.add = function(self, obj)
 	utils.addToList(self.elements, obj)
+	obj.parent = self
 	return obj
 end
 
