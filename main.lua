@@ -1,5 +1,7 @@
 local main = require("src/overlays/main")
 
+local ui = require("src/ui")
+
 local mouseIdle = love.mouse.newCursor("img/cursor.png", 2, 2)
 local mouseActive = love.mouse.newCursor("img/cursorClick.png", 2, 2)
 
@@ -7,6 +9,8 @@ local mouseX = 0
 local mouseY = 0
 
 function love.load()
+	ui:loadElements()
+
 	print("[*] Welcome to " .. love.window.getTitle() .. "!")
 	print("[*] Client version: 0.0.1")
 	print("[*] Made by MaxPan")
